@@ -60,17 +60,56 @@ PROFESSION_DOMAINS = {
 
 # Streamlit interface setup
 st.set_page_config(page_title="AI-Buddy Assistant", page_icon="AI-Buddy.png", layout="centered")
-
+st.markdown('<a href="#sidebar" style="font-size: 1.2rem; color: #ff4b4b; text-decoration: none;">⬅️ Go to Sidebar to know how AI helps in your profession</a>', unsafe_allow_html=True)
 # Load and resize the image
 img = Image.open("AI Buddy Green Logo.png")
 resized_img = img.resize((400, 150))
 
-# Display the resized image
-st.image(resized_img, caption="AI-Buddy Assistant")
+# Prevent image expansion
+with st.container():
+    st.image(resized_img, caption="AI-Buddy Assistant", use_column_width=True, output_format="PNG")
+    
+# # Streamlit interface setup
+# st.set_page_config(
+#     page_title="AI-Buddy Assistant",
+#     page_icon="AI-Buddy.png",
+#     layout="centered",
+#     initial_sidebar_state="auto",
+#     menu_items=None
+# )
 
-# Custom CSS
+# Enhanced CSS to hide ALL Streamlit elements including bottom icons
 st.markdown("""
     <style>
+        /* Hide Streamlit Decoration */
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        
+        /* Hide bottom app elements */
+        .stApp iframe[height="0"] {display: none;}
+        .stApp div[data-testid="stDecoration"] {display: none;}
+        .stApp div[data-testid="stToolbar"] {display: none;}
+        .stApp .streamlit-footer {display: none;}
+        .stApp div[data-testid="stStatusWidget"] {display: none;}
+        
+        /* Hide all iframe elements that might contain icons */
+        iframe {
+            display: none !important;
+        }
+        
+        /* Hide specific bottom elements */
+        div[data-testid="stBottomBlockButtons"] {display: none;}
+        .stHorizontalBlock {display: none;}
+        
+        /* Additional selectors for bottom icons */
+        section[data-testid="stBottomBlock"] {display: none;}
+        .streamlit-bottom {display: none;}
+        
+        /* Force remove any fixed positioned elements at bottom */
+        div[style*="position: fixed"][style*="bottom"] {display: none !important;}
+        
+        /* Your existing styles */
         .sidebar .sidebar-content {
             font-size: 1.1rem;
             color: #333333;
@@ -107,9 +146,29 @@ st.markdown("""
         .st-chat-message p {
             font-size: 1.1rem;
         }
+        
+        /* Hide any remaining Streamlit elements */
+        .reportview-container .main footer {display: none;}
+        .reportview-container .main .block-container {padding-bottom: 0;}
     </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+    <style>
+        img {
+            pointer-events: none; /* Disable click behavior */
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+
+# Add this to remove default Streamlit menu items
+st.markdown("""
+    <script>
+        var elements = window.parent.document.querySelectorAll('.stApp [data-testid="stToolbar"]')
+        elements[0].remove()
+    </script>
+""", unsafe_allow_html=True)
 # Sidebar title
 st.sidebar.title("Want to know how AI helps in your profession and the role of AI-Buddy?")
 st.sidebar.write("Select your details below and discover the potential of AI in your career!")
@@ -145,7 +204,7 @@ if profession and profession != "Select Profession":
             ["Select Domain"] + PROFESSION_DOMAINS[profession],
             key="domain_selector"
         )
-        
+
         if domain == "Other":
             custom_domain = st.sidebar.text_input("Please specify your domain")
             if custom_domain:
@@ -171,13 +230,13 @@ if st.sidebar.button("Submit"):
     else:
         # Format the profession details for the chat
         profession_details = f"My profession is {selected_profession} in the {selected_domain} domain"
-        
+
         # Add input details as a message to chat history
         st.session_state.messages.append({
             "role": "user",
             "content": f"{profession_details}. Here's a bit about me: {description}. Tell me  AI-Buddy can help me."
         })
-        
+
         # Clear the sidebar content
         st.sidebar.empty()
         st.sidebar.write("Details submitted! You can continue chatting below.")
@@ -201,7 +260,7 @@ def get_chat_response():
 
     try:
         response = requests.post(f"{API_BASE_URL}/chat/completions", headers=headers, json=data)
-        
+
         if response.status_code == 200:
             response_json = response.json()
             content = response_json["choices"][0]["message"]["content"]
