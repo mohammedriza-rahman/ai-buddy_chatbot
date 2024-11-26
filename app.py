@@ -60,7 +60,7 @@ PROFESSION_DOMAINS = {
 
 # Streamlit interface setup
 st.set_page_config(page_title="AI-Buddy Assistant", page_icon="AI-Buddy.png", layout="centered")
-st.markdown('<a href="#sidebar" style="font-size: 1.2rem; color: #ff4b4b; text-decoration: none;">⬅️ Go to Sidebar to know how AI helps in your profession</a>', unsafe_allow_html=True)
+st.markdown('<a href="#sidebar" style="font-size: 0.8rem; color: #000000; text-decoration: none;">⬅️ Go to Sidebar to know how AI helps in your profession</a>', unsafe_allow_html=True)
 
 # Load and resize the image
 img = Image.open("AI Buddy Green Logo.png")
