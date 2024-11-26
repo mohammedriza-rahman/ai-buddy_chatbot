@@ -68,7 +68,7 @@ resized_img = img.resize((400, 150))
 
 # Prevent image expansion
 with st.container():
-    st.image(resized_img, caption="AI-Buddy Assistant", use_column_width=True, output_format="PNG")
+    st.image(resized_img, caption="AI-Buddy Assistant", use_column_width=False, output_format="PNG")
     
 # # Streamlit interface setup
 # st.set_page_config(
